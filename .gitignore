@@ -55,3 +55,6 @@ target/
 
 # Pycharm config
 .idea/
+
+# django tmp files
+db.sqlite3
