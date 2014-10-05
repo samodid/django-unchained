@@ -3,10 +3,18 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/master.css">
 </head>
+
 <body>
-{% block content %}
- Hello from base.html
-{% endblock content %}
+    <div id="content">
+        <div id="header">
+            <div id="site-logo">N</div>
+            <div id="site-title"><h1>Tuts+ News</h1></div>
+        </div>
+        {% block content %}
+         Hello from base.html
+        {% endblock content %}
+    </div>
 </body>
 </html>

@@ -1,7 +1,7 @@
 import datetime
 from django.shortcuts import render_to_response
 from django.utils.timezone import utc
-
+from django.template import RequestContext
 
 from future_builtins import  ascii
 from .models import Story
@@ -20,5 +20,8 @@ def top_stories(top=180, consider=1000):
 
 def index(request):
     stories = top_stories(top=30)
-
-    return render_to_response('stories/index.html', {'stories': stories})
+    context = RequestContext(request, {
+        'stories': stories
+    }
+                             )
+    return render_to_response('stories/index.html', context)
