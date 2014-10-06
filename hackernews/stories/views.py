@@ -1,10 +1,11 @@
 import datetime
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.utils.timezone import utc
-from django.template import RequestContext
+from django.http import HttpResponseRedirect
 
-from future_builtins import  ascii
+from future_builtins import ascii
 from .models import Story
+from stories.forms import StoryForm
 
 
 def score(story, gravity=1.8, timebase=120):
@@ -20,8 +21,14 @@ def top_stories(top=180, consider=1000):
 
 def index(request):
     stories = top_stories(top=30)
-    context = RequestContext(request, {
-        'stories': stories
-    }
-                             )
-    return render_to_response('stories/index.html', context)
+    return render(request, 'stories/index.html', {'stories': stories})
+
+def story(request):
+    if request.method == 'POST':
+        form = StoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/')
+    else:
+        form = StoryForm()
+    return render(request, 'stories/story.html',{'form': form})
