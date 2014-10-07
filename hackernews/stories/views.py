@@ -2,8 +2,8 @@ import datetime
 from django.shortcuts import render
 from django.utils.timezone import utc
 from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
 
-from future_builtins import ascii
 from .models import Story
 from stories.forms import StoryForm
 
@@ -11,8 +11,8 @@ from stories.forms import StoryForm
 def score(story, gravity=1.8, timebase=120):
     points = (story.points - 1)**0.8
     now = datetime.datetime.utcnow().replace(tzinfo=utc)
-    age = int((now - story.created_at).total_seconds())/60
-    return  points/(age*timebase)**1.8
+    age = int((now - story.created_at).total_seconds())/60 + 120
+    return points/(age*timebase)**gravity
 
 def top_stories(top=180, consider=1000):
     latest_stoties = Story.objects.all().order_by('-created_at')[:consider]
@@ -21,13 +21,19 @@ def top_stories(top=180, consider=1000):
 
 def index(request):
     stories = top_stories(top=30)
-    return render(request, 'stories/index.html', {'stories': stories})
+    return render(request, 'stories/index.html', {
+        'stories': stories,
+        'user': request.user
+    })
 
+@login_required
 def story(request):
     if request.method == 'POST':
         form = StoryForm(request.POST)
         if form.is_valid():
-            form.save()
+            story = form.save(commit=False)
+            story.moderator = request.user
+            story.save()
             return HttpResponseRedirect('/')
     else:
         form = StoryForm()
