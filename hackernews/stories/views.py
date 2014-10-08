@@ -1,7 +1,7 @@
 import datetime
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.utils.timezone import utc
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 
 from .models import Story
@@ -38,3 +38,10 @@ def story(request):
     else:
         form = StoryForm()
     return render(request, 'stories/story.html',{'form': form})
+
+@login_required
+def vote(request):
+    story = get_object_or_404(Story, pk=request.get('story'))
+    story.points += 1
+    story.save()
+    return HttpResponse()
