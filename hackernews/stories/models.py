@@ -6,7 +6,8 @@ class Story(models.Model):
     title = models.CharField(max_length=200)
     url = models.URLField()
     points = models.IntegerField(default=1)
-    moderator = models.ForeignKey(User)
+    moderator = models.ForeignKey(User, related_name='moderated_stories')
+    voters = models.ManyToManyField(User,related_name='liked_stories')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -19,3 +20,5 @@ class Story(models.Model):
 
     class Meta:
         verbose_name_plural = 'Stories'
+
+
