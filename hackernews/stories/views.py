@@ -41,7 +41,7 @@ def story(request):
 
 @login_required
 def vote(request):
-    story = get_object_or_404(Story, pk=request.get('story'))
+    story = get_object_or_404(Story, pk=request.POST.get('story'))
     story.points += 1
     story.save()
     return HttpResponse()
